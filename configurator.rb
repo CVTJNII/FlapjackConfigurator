@@ -55,8 +55,10 @@ end
 class FlapjackObjectBase
   attr_accessor :config
 
-  def initialize(id, current_config, getter_method, create_method, update_method, delete_method)
+  def initialize(id, current_config, getter_method, create_method, update_method, delete_method, logger, log_name)
     @config = {}
+    @logger = logger
+    @log_name = log_name # A user friendly name for log entries
 
     @getter_method = getter_method
     @create_method = create_method
@@ -103,6 +105,7 @@ class FlapjackObjectBase
 
     return if change_list.empty?
 
+    @logger.info("Updating #{@log_name} #{id} with changes #{change_list}")
     fail "Failed to update #{id}" unless @update_method.call(id, change_list)
     _reload_config
   end
@@ -110,6 +113,7 @@ class FlapjackObjectBase
   # Delete the object
   def delete
     fail("Object #{id} doesn't exist") unless @obj_exists
+    @logger.info("Deleting #{@log_name} #{id}")
     fail "Failed to delete #{id}" unless @delete_method.call(id)
     @obj_exists = false
   end
@@ -122,24 +126,29 @@ class FlapjackSubObjectBase < FlapjackObjectBase
     fail("Object #{id} exists") if @obj_exists
     # AFAIK there is not an easy way to convert hash keys to symbols outside of Rails
     config.each { |k, v| @config[k.to_sym] = v }
-    fail "Failed to create #{id}" unless @create_method.call(contact_id, @config)
+    @logger.info("Creating #{@log_name} #{id} with config #{@config}")
+    fail "Failed to create #{@log_name} #{id}" unless @create_method.call(contact_id, @config)
     _reload_config
+  end
+
+  def _filter_config(config)
+    filtered_config = config.select { |k, _| @allowed_config_keys.include? k.to_sym }
+    @logger.debug("#{@log_name} #{id}: Config keys filtered out: #{config.keys - filtered_config.keys}")
+    @logger.debug("#{@log_name} #{id}: Allowed keys: #{@allowed_config_keys}")
+    return filtered_config
+  end
+
+  # Update the media from a config hash of updated values
+  def update(config)
+    _update(_filter_config(config))
   end
 end
 
 # Class representing Flapjack media
 class FlapjackMedia < FlapjackSubObjectBase
-  def initialize(current_config, diner)
-    super(nil, current_config, diner.method(:media), diner.method(:create_contact_media), diner.method(:update_media), diner.method(:delete_media))
-  end
-
-  def _filter_config(config)
-    return config.select { |k, _| [:address, :interval, :rollup_threshold].include? k.to_sym }
-  end
-
-  # Update the media from a config hash of updated values (:address, :interval, :rollup_threshold)
-  def update(config)
-    _update(_filter_config(config))
+  def initialize(current_config, diner, logger)
+    super(nil, current_config, diner.method(:media), diner.method(:create_contact_media), diner.method(:update_media), diner.method(:delete_media), logger, 'media')
+    @allowed_config_keys = [:address, :interval, :rollup_threshold]
   end
 
   # Create a new entry
@@ -153,21 +162,48 @@ class FlapjackMedia < FlapjackSubObjectBase
   end
 end
 
+# Class representing Pagerduty credentials
+# In Flapjack 1.x Pagerduty is somewhat duct-taped to the side of the thing and not handled as media.
+# However, to make our lives easier, make this class look like FlapjackMedia so that it can be handled like a media entry
+class FlapjackPagerduty < FlapjackSubObjectBase
+  def initialize(current_config, diner, logger)
+    # The contact ID is essentially the pagerduty credentials ID; 1-1
+    # Pull the ID from the config.  Contacts is an array but in practice it only appears to ever be single-element.
+    conf_id = current_config.nil? ? nil : current_config[:links][:contacts][0]
+    super(conf_id, current_config, diner.method(:pagerduty_credentials), diner.method(:create_contact_pagerduty_credentials),
+          diner.method(:update_pagerduty_credentials), diner.method(:delete_pagerduty_credentials), logger, 'pagerduty')
+    @allowed_config_keys = [:subdomain, :token, :service_key]
+  end
+
+  def create(contact_id, config)
+    config[:id] = contact_id
+    _create(contact_id, _filter_config(config))
+  end
+
+  # Type helper to match FlapjackMedia
+  def type
+    return 'pagerduty'
+  end
+end
+
 # Class representing a Flapjack contact
 class FlapjackContact < FlapjackObjectBase
-  def initialize(id, current_config, diner, current_media = {})
+  attr_accessor :media
+
+  def initialize(my_id, current_config, diner, logger, current_media = [])
     @diner = diner
-    super(id, current_config, diner.method(:contacts), diner.method(:create_contacts), diner.method(:update_contacts), diner.method(:delete_contacts))
+    @logger = logger
+    super(my_id, current_config, diner.method(:contacts), diner.method(:create_contacts), diner.method(:update_contacts), diner.method(:delete_contacts), logger, 'contact')
 
     # Select our media out from a premade hash of all media built from a single API call
-    @media = current_media.select { |_, m| m.config[:links][:contacts].include? 'DevOpsTest' }
+    @media = current_media.select { |m| m.config[:links][:contacts].include? id }
   end
 
   # Update all the things
-  def update(contact_config, entity_mapper)
+  def update(contact_config, entity_mapper, baseline_options)
     update_attributes(contact_config)
     update_entities(entity_mapper)
-    update_media(contact_config)
+    update_media(contact_config, baseline_options)
   end
 
   # Define our own _create as it doesn't use an ID
@@ -175,7 +211,8 @@ class FlapjackContact < FlapjackObjectBase
     fail("Object #{id} exists") if @obj_exists
     # AFAIK there is not an easy way to convert hash keys to symbols outside of Rails
     config.each { |k, v| @config[k.to_sym] = v }
-    fail "Failed to create #{id}" unless @create_method.call([@config])
+    @logger.info("Creating contact #{id} with config #{@config}")
+    fail "Failed to create contact #{id}" unless @create_method.call([@config])
     _reload_config
   end
 
@@ -212,28 +249,55 @@ class FlapjackContact < FlapjackObjectBase
     _reload_config
   end
 
-  # Update the media for the contact
-  def update_media(contact_config)
-    # Pagerduty is somewhat bolted on in 1.x aso it needs to be handled independently
-    config_media_types = (contact_config['notifications'].keys - %w(defaults pagerduty))
+  def _build_media_config(config_media_types, contact_config, baseline_options)
+    # Prebuild the hashes from the config, merging in defaults
+    merged_config = baseline_options.key?('media') ? DeepClone.clone(baseline_options['media']) : {}
+    contact_defaults = contact_config['notifications'].key?('defaults') ? contact_config['notifications']['defaults'] : {}
 
-    @media.each do |media_id, media_obj|
+    config_media_types.each do |type|
+      # Merge merge merge!
+      if merged_config.key? type
+        merged_config[type].merge!(contact_defaults.merge(contact_config['notifications'][type]))
+      else
+        merged_config[type] = contact_defaults.merge(contact_config['notifications'][type])
+      end
+
+      @logger.debug("Media[#{type}] complete config: #{merged_config[type]}")
+    end
+
+    return merged_config
+  end
+
+  # Update the media for the contact
+  def update_media(contact_config, baseline_options)
+    # Skip defaults as that's not a type
+    config_media_types = (contact_config['notifications'].keys - %w(defaults))
+    merged_config = _build_media_config(config_media_types, contact_config, baseline_options)
+
+    @media.each do |media_obj|
       if config_media_types.include? media_obj.type
-        media_obj.update(contact_config['notifications']['defaults'].merge(contact_config['notifications'][media_obj.type]))
+        media_obj.update(merged_config[media_obj.type])
 
         # Delete the ID from the type array
         # This will result in config_media_types being a list of types that need to be created at the end of the loop
         config_media_types.delete(media_obj.type)
       else
+        @media.delete(media_obj.id)
         media_obj.delete
-        @media.delete(media_id)
       end
     end
 
     config_media_types.each do |type|
-      media_obj = FlapjackMedia.new(nil, @diner)
-      media_obj.create(id, type, contact_config['notifications']['defaults'].merge(contact_config['notifications'][type]))
-      @media[media_obj.id] = media_obj
+      # Pagerduty special case again
+      # TODO: Push this back up so that the if isn't done here
+      if type == 'pagerduty'
+        media_obj = FlapjackPagerduty.new(nil, @diner, @logger)
+        media_obj.create(id, merged_config[type])
+      else
+        media_obj = FlapjackMedia.new(nil, @diner, @logger)
+        media_obj.create(id, type, merged_config[type])
+      end
+      @media << (media_obj)
     end
   end
 end
@@ -242,16 +306,19 @@ end
 class FlapjackConfig
   attr_accessor :config, :contacts
 
-  def initialize(config, diner)
+  def initialize(config, diner, logger)
     @config = config
-    @diner = diner
+    @diner  = diner
+    @logger = logger
 
     @entity_mapper = EntityMapper.new(@config, @diner)
 
     # Media will be tied in via the contacts, however pregenerate objects off a single API call for speed.
-    media = {}.tap { |me| @diner.media.map { |api_media| me[api_media[:id]] = FlapjackMedia.new(api_media, @diner) } }
+    media = @diner.media.map { |api_media| FlapjackMedia.new(api_media, @diner, logger) }
+    # Also add PagerDuty creds into media.  PD creds are handled separately by the API but can be grouped thanks to our class handling.
+    media += @diner.pagerduty_credentials.map { |api_pd| FlapjackPagerduty.new(api_pd, @diner, logger) }
 
-    @contacts = {}.tap { |ce| @diner.contacts.map { |api_contact| ce[api_contact[:id]] = FlapjackContact.new(nil, api_contact, @diner, media) } }
+    @contacts = {}.tap { |ce| @diner.contacts.map { |api_contact| ce[api_contact[:id]] = FlapjackContact.new(nil, api_contact, @diner, logger, media) } }
   end
 
   # Loop over the contacts and call update/create/remove methods as needed
@@ -261,7 +328,7 @@ class FlapjackConfig
 
     @contacts.each do |id, contact_obj|
       if config_contact_ids.include? id
-        contact_obj.update(@config['contacts'][id], @entity_mapper)
+        contact_obj.update(@config['contacts'][id], @entity_mapper, @config['baseline_options'])
 
         # Delete the ID from the id array
         # This will result in config_contact_ids being a list of IDs that need to be created at the end of the loop
@@ -275,8 +342,8 @@ class FlapjackConfig
 
     # Add new contacts to Flapjack
     config_contact_ids.each do |new_id|
-      contact_obj = FlapjackContact.new(new_id, nil, @diner)
-      contact_obj.update(@config['contacts'][new_id], @entity_mapper)
+      contact_obj = FlapjackContact.new(new_id, nil, @diner, @logger)
+      contact_obj.update(@config['contacts'][new_id], @entity_mapper, @config['baseline_options'])
       @contacts[new_id] = contact_obj
     end
 
