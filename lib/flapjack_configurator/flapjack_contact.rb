@@ -24,10 +24,12 @@ module FlapjackConfigurator
   
     # Update all the things
     def update(config_obj)
-      update_attributes(config_obj)
-      update_entities(config_obj)
-      update_media(config_obj)
-      update_notification_rules(config_obj)
+      ret_val = false
+      ret_val = true if update_attributes(config_obj)
+      ret_val = true if update_entities(config_obj)
+      ret_val = true if update_media(config_obj)
+      ret_val = true if update_notification_rules(config_obj)
+      return ret_val
     end
   
     # Define our own _create as it doesn't use an ID
@@ -53,9 +55,10 @@ module FlapjackConfigurator
     def update_attributes(config_obj)
       @logger.debug("Updating attributes for contact #{id}")
       if @obj_exists
-        _update(config_obj.contact_config(id)['details'])
+        return _update(config_obj.contact_config(id)['details'])
       else
         _create(config_obj.contact_config(id)['details'])
+        return true
       end
     end
   
@@ -80,17 +83,20 @@ module FlapjackConfigurator
       end
   
       _reload_config
+      # != returns false positives
+      return (current_entities - wanted_entities).length > 0
     end
   
     # Update the media for the contact
     def update_media(config_obj)
       @logger.debug("Updating media for contact #{id}")
       media_config = config_obj.media(id)
-  
+      ret_val = false
+
       media_config_types = media_config.keys
       @media.each do |media_obj|
         if media_config_types.include? media_obj.type
-          media_obj.update(media_config[media_obj.type])
+          ret_val = true if media_obj.update(media_config[media_obj.type])
   
           # Delete the ID from the type array
           # This will result in media_config_types being a list of types that need to be created at the end of the loop
@@ -98,6 +104,7 @@ module FlapjackConfigurator
         else
           @media.delete(media_obj)
           media_obj.delete
+          ret_val = true
         end
       end
   
@@ -113,16 +120,19 @@ module FlapjackConfigurator
         end
         @media << media_obj
       end
+
+      return ret_val || media_config_types.length > 0
     end
   
     def update_notification_rules(config_obj)
       @logger.debug("Updating notification rules for contact #{id}")
       nr_config = config_obj.notification_rules(id)
       nr_config_ids = nr_config.keys
-  
+      ret_val = false
+
       @notification_rules.each do |nr_obj|
         if nr_config_ids.include? nr_obj.id
-          nr_obj.update(nr_config[nr_obj.id])
+          ret_val = true if nr_obj.update(nr_config[nr_obj.id])
   
           # Delete the ID from the type array
           # This will result in nr_config_ids being a list of types that need to be created at the end of the loop
@@ -130,6 +140,7 @@ module FlapjackConfigurator
         else
           @notification_rules.delete(nr_obj)
           nr_obj.delete
+          ret_val = true
         end
       end
   
@@ -138,6 +149,8 @@ module FlapjackConfigurator
         nr_obj.create(id, nr_config[nr_id])
         @notification_rules << (nr_obj)
       end
+
+      return ret_val || nr_config_ids.length > 0
     end
   end
 end

@@ -32,7 +32,7 @@ module FlapjackConfigurator
     end
   
     def update(config)
-      _update(config)
+      return _update(config)
     end
   end
 end

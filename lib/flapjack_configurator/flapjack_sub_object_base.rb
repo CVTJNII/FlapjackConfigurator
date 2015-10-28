@@ -24,7 +24,7 @@ module FlapjackConfigurator
   
     # Update the media from a config hash of updated values
     def update(config)
-      _update(_filter_config(config))
+      return _update(_filter_config(config))
     end
   end
 end

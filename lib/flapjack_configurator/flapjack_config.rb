@@ -31,10 +31,11 @@ module FlapjackConfigurator
     # Builds the @contacts hash
     def update_contacts
       config_contact_ids = @config_obj.contact_ids
+      ret_val = false
   
       @contacts.each do |id, contact_obj|
         if config_contact_ids.include? id
-          contact_obj.update(@config_obj)
+          ret_val = true if contact_obj.update(@config_obj)
   
           # Delete the ID from the id array
           # This will result in config_contact_ids being a list of IDs that need to be created at the end of the loop
@@ -43,6 +44,7 @@ module FlapjackConfigurator
           # Delete contact from Flapjack
           contact_obj.delete
           @contacts.delete(id)
+          ret_val = true
         end
       end
   
@@ -53,8 +55,8 @@ module FlapjackConfigurator
         @contacts[new_id] = contact_obj
       end
 
-      # Explicitly return nil
-      return nil
+      # Return true if changes made
+      return ret_val || config_contact_ids.length > 0
     end
   end
 end
