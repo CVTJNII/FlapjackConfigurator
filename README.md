@@ -43,10 +43,10 @@ contacts:
       pagerduty:
         service_key: PagerDutyServiceKey
 
-      email: 
+      email:
         address: test.user@example.com
 
-      jabber: 
+      jabber:
         address: room@conf.hipchat.com
 
     notification_rules:
@@ -59,13 +59,16 @@ contacts:
           - jabber
           - email
 
-    # Entities: An exact list of entities
+    # Entities: A list of entities to associate with the contact
     # Priority ordering is:
     #  1: Exact entities
     #  2: Blacklist entities
     #  3: Blacklist regex
-    #  4: Entities regex  
+    #  4: Entities regex
+    #
+    # If entities/default is true the contact will be associated with all entities which would otherwise not be associated with any contact.
     entities:
+      default: false
       exact:
         - foo-app-1
       regex:
