@@ -52,6 +52,9 @@ module FlapjackConfigurator
         contact_obj.update(@config_obj)
         @contacts[new_id] = contact_obj
       end
+
+      # Explicitly return nil
+      return nil
     end
   end
 end
