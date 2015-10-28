@@ -1,7 +1,7 @@
 Flapjack Configurator
 =====================
 
-This gem provides a idempotent, file based fonfigurator for [Flapjack](flapjack.io)
+This gem provides a idempotent, file based fonfigurator for [Flapjack](http://flapjack.io)
 
 Configuration
 -------------
@@ -77,13 +77,13 @@ contacts:
         - "datagen-[78]"
 ```
 
-Most (but not all) of the options are passed through directly to the API (This is logged at debug level)
+Most (but not all) of the options are passed through directly to the API (This is logged at debug level).
 notification_media and notification_rules are merged down with the per contact rule with the highest precidence, contact defaults, and then baseline_options.
 
 Use
 ===
 
-WARNING: Will log passwords/API tokens at debug log level!
+WARNING: Passwords/API tokens will be logged at debug log level!
 
 Command Line
 ------------
@@ -100,7 +100,7 @@ Specific options:
         --version                    Show version
 ```
 
-Files is a list of yaml files which are merged together to form the configuration.
+Files is a comma-separated list of yaml files which are merged together to form the configuration.
 API URL should be of the form "http://${hostname}:${port}"
 
 Gem
@@ -112,14 +112,16 @@ require 'flapjack_configurator'
 FlapjackConfigurator.configure_flapjack(config, api_base_url, logger)
 ```
 
-configure_flapjack method:
+### configure_flapjack method:
+
 - Arguments:
--- config (Hash): Configuration hash to apply
--- api_base_url (String)(Default: http://127.0.0.1:3081): Flapjack API URL string to connect to
--- logger (Logger)(Default: Logger.new(STDOUT)): Logger class to log to
+  - config (Hash): Configuration hash to apply
+  - api_base_url (String)(Default: http://127.0.0.1:3081): Flapjack API URL string to connect to
+  - logger (Logger)(Default: Logger.new(STDOUT)): Logger class to log to
 - Return value: Boolean: true if changes were applied, false otherwise
 
-version method:
+### version method:
+
 - Arguments: None
 - Return value: String: Gem version
 
