@@ -44,7 +44,7 @@ def parse_arguments(args, logger)
     end  
 
     opts.on_tail("--version", "Show version") do
-      puts FlapjackConfigurator.version
+      puts "Flapjack Configurator #{FlapjackConfigurator.version}"
       exit
     end
   end
@@ -73,11 +73,10 @@ end
 def main
   logger = Logger.new(STDOUT)
   options = parse_arguments(ARGV, logger)
-  config = load_config(options.files, login)
+  config = load_config(options.files, logger)
 
   logger.info("Nothing to do") unless FlapjackConfigurator.configure_flapjack(config, options.api_url, logger)
 end
 
-if __FILE__ == $0
-  main
-end
+# The __FILE__ $0 trick doesn't work when loaded through the gem wrapper
+main
