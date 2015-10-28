@@ -64,7 +64,8 @@ module FlapjackConfigurator
 
       return false if change_list.empty?
 
-      @logger.info("Updating #{@log_name} #{id} with changes #{change_list}")
+      @logger.info("Updating #{@log_name} #{id}")
+      @logger.debug("#{@log_name} #{id} changes: #{change_list}")
       fail "Failed to update #{id}" unless @update_method.call(id, change_list)
       _reload_config
       return true
