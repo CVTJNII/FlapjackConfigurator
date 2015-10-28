@@ -1,0 +1,83 @@
+#!/usr/bin/env ruby
+
+require 'flapjack_configurator'
+require 'optparse'
+require 'ostruct'
+require 'logger'
+require 'yaml'
+require 'deep_merge'
+
+# Parse the command line arguments
+def parse_arguments(args, logger)
+  options = OpenStruct.new
+  options.api_url = 'http://127.0.0.1:3081'
+  logger.level = Logger::INFO
+  options.files = []
+
+  opts = OptionParser.new do |opts|
+    opts.banner = "Usage: flapjack_configurator [options]"
+    
+    opts.separator ""
+    opts.separator "Specific options:"
+    
+    opts.on('-u', '--apiurl URL', String, 'Flapjack API URL') do |url|
+      options.api_url = url
+      logger.debug("API URL set to #{url}")
+    end
+
+    opts.on('-v', '--verbosity [level]', Integer, 'Set Verbosity, level corresponds to Ruby logger levels (0: debug, 3: error)') do |level|
+      if level
+        logger.level = level
+      else
+        logger.level -= 1 if logger.level > 0
+      end
+      logger.debug("Log level set to #{logger.level}")
+    end
+
+    opts.on('-f', '--files file1,file2,file3', Array, 'List of YAML config files to load, increasing precidence') do |files|
+      options.files += files
+    end
+
+    opts.on_tail("-h", "--help", "Show this message") do
+      puts opts
+      exit
+    end  
+
+    opts.on_tail("--version", "Show version") do
+      puts FlapjackConfigurator.version
+      exit
+    end
+  end
+
+  opts.parse!(args)
+
+  if options.files.length < 1
+    logger.fatal("Option --files is required")
+    exit
+  end
+
+  return options
+end
+
+# Load and merge the configs
+def load_config(file_list, logger)
+  config = {}
+  file_list.each do |file_name|
+    logger.debug("Loading config file #{file_name}")
+    config.deep_merge!(YAML.load_file(file_name))
+  end
+
+  return config
+end
+
+def main
+  logger = Logger.new(STDOUT)
+  options = parse_arguments(ARGV, logger)
+  config = load_config(options.files, login)
+
+  logger.info("Nothing to do") unless FlapjackConfigurator.configure_flapjack(config, options.api_url, logger)
+end
+
+if __FILE__ == $0
+  main
+end
