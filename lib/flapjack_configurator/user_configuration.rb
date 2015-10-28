@@ -42,6 +42,13 @@ module FlapjackConfigurator
       }.deep_merge(@config['contacts'][contact_id])
     end
 
+    # Return a list of contacts with the default bit set
+    # This is pretty entitymapper centric, but it makes more sense here due to current layout.
+    def default_contacts
+      return @config['contacts'].select { |_, c| c['entities']['default'] }.keys
+    end
+
+
     def baseline_config
       if @config.key? 'baseline_options'
         return @config['baseline_options']

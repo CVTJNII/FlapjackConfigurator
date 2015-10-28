@@ -10,13 +10,25 @@ module FlapjackConfigurator
 
     def initialize(config_obj, diner)
       @entity_map = {}.tap { |em| config_obj.contact_ids.each { |cn| em[cn.to_sym] = [] } }
+      default_contacts = config_obj.default_contacts
 
       # Walk the entities and compare each individually so that the whitelisting/blacklisting can be easily enforced
       # This probably will need some optimization
       diner.entities.each do |entity|
-        config_obj.contact_ids.each do |contact_name|
-          match_id = _check_entity(entity, config_obj.contact_config(contact_name))
-          @entity_map[contact_name.to_sym].push(match_id) if match_id
+        contact_defined = false
+        config_obj.contact_ids.each do |contact_id|
+          match_id = _check_entity(entity, config_obj.contact_config(contact_id))
+          if match_id
+            @entity_map[contact_id.to_sym].push(entity[:id])
+            contact_defined = true
+          end
+        end
+
+        unless contact_defined
+          # No contacts match this entity, add it to the defaults
+          default_contacts.each do |contact_id|
+            @entity_map[contact_id.to_sym].push(entity[:id])
+          end
         end
       end
 
@@ -28,23 +40,23 @@ module FlapjackConfigurator
     # Returns the entity ID on match or nil on no match
     def _check_entity(entity, contact)
       # Priority 1: Exact Entries
-      return entity[:id] if contact['entities']['exact'].include? entity[:name]
+      return true if contact['entities']['exact'].include? entity[:name]
 
       # Priority 2: Exact blacklist
-      return nil if contact['entities_blacklist']['exact'].include? entity[:name]
+      return false if contact['entities_blacklist']['exact'].include? entity[:name]
 
       # Priority 3: Regex blacklist
       contact['entities_blacklist']['regex'].each do |bl_regex|
-        return nil if /#{bl_regex}/.match(entity[:name])
+        return false if /#{bl_regex}/.match(entity[:name])
       end
 
       # Priority 4: Match regex
       contact['entities']['regex'].each do |m_regex|
-        return entity[:id] if /#{m_regex}/.match(entity[:name])
+        return true if /#{m_regex}/.match(entity[:name])
       end
 
       # Fallthrough
-      return nil
+      return false
     end
 
     # Return the entities for the given contact
