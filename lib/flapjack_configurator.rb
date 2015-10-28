@@ -15,6 +15,9 @@ module FlapjackConfigurator
       logger.level = Logger::INFO
     end
 
+    # The underlying classes treat the Flapjack::Diner module as if it is a class.
+    # This was done as it was fairly natural and will allow Flapjack::Diner to be
+    # replaced or wrapped very easily in the future.
     config_obj = FlapjackConfig.new(config, Flapjack::Diner, logger)
 
     # Update the contacts
