@@ -58,5 +58,14 @@ module FlapjackConfigurator
       # Return true if changes made
       return ret_val || config_contact_ids.length > 0
     end
+
+    # Ensure the ALL entity is present
+    # http://flapjack.io/docs/1.0/usage/Howto-Dynamic-Entity-Contact-Linking/
+    def add_all_entity
+      return false if @diner.entities('ALL')
+      @logger.info('Creating the ALL magic entity')
+      fail('Failed to create ALL entity') unless @diner.create_entities(id: 'ALL', name: 'ALL')
+      return true
+    end
   end
 end

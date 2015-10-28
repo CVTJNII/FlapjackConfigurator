@@ -1,0 +1,121 @@
+# Example/Demo Flapjack setup file
+
+baseline_options:
+  notification_media:
+    # Baseline Pagerduty creds
+    # Pagerduty setup takes the domain, a API token to poll for acks, and a service key unique to the Pagerduty service
+    # Define the (common) domain id and API token here
+    # Currently only one PD instance is supported to keep the config handling easy. (/lazy)
+    pagerduty:
+      subdomain: foocorp
+      token: PagerDutyAPIToken
+
+# Contacts!
+contacts:
+  TestUser:
+    # Details is a direct map to the Flapjack API arguments (except notification related fields)
+    # http://flapjack.io/docs/1.0/jsonapi/#create-contacts
+    details:
+      first_name: Test
+      last_name: User
+      # Email is required but is only used here for documentation
+      email: test.user@example.com
+      timezone: MST7MDT
+
+    notification_media:
+      defaults:
+        # Re-notify every 30 minutes
+        interval: 1800
+        rollup_threshold: 3
+
+      # Only one of each is allowed in Flapjack 1.x :(
+      pagerduty:
+        service_key: PagerDutyServiceKey
+
+      email: 
+        address: test.user@example.com
+
+      jabber: 
+        address: room@conf.hipchat.com
+
+    notification_rules:
+      default:
+        warning_media:
+          - jabber
+          - email
+        critical_media:
+          - pagerduty
+          - jabber
+          - email
+   
+    # Entities: An exact list of entities
+    # Priority ordering is:
+    #  1: Exact entities
+    #  2: Blacklist entities
+    #  3: Blacklist regex
+    #  4: Entities regex  
+    entities:
+      exact:
+        - foo-app-1
+      regex:
+        - "datagen-[0-9]+"
+    entities_blacklist:
+      exact:
+        - datagen-2
+      regex:
+        - "datagen-[78]"
+
+  DefaultUser:
+    details:
+      first_name: Default
+      last_name: User
+      email: default.user@example.com
+      timezone: MST7MDT
+
+    notification_media:
+      defaults:
+        # Re-notify every 30 minutes
+        interval: 1800
+        rollup_threshold: 3
+
+      # Only one of each is allowed in Flapjack 1.x :(
+      email:
+        address: test.user@example.com
+
+    notification_rules:
+      default:
+        warning_media:
+          - email
+        critical_media:
+          - email
+
+    entities:
+      default: true 
+
+  Beard:
+    details:
+      first_name: Beard
+      last_name: User
+      email: beard.user@example.com
+      timezone: CST6CDT
+
+    notification_media:
+      defaults:
+        # Re-notify every 30 minutes
+        interval: 1800
+        rollup_threshold: 3
+
+      # Only one of each is allowed in Flapjack 1.x :(
+      email:
+        address: beard.user@example.com
+
+    notification_rules:
+      default:
+        warning_media:
+          - email
+        critical_media:
+          - email
+
+    entities:
+      exact:
+        - ALL

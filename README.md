@@ -123,6 +123,7 @@ FlapjackConfigurator.configure_flapjack(config, api_base_url, logger)
   - config (Hash): Configuration hash to apply
   - api_base_url (String)(Default: http://127.0.0.1:3081): Flapjack API URL string to connect to
   - logger (Logger)(Default: Logger.new(STDOUT)): Logger class to log to
+  - enable_all_entity (Boolean)(Default: true): Add the ALL magic entity if it doesn't exist
 - Return value: Boolean: true if changes were applied, false otherwise
 
 ### version method:

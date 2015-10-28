@@ -8,7 +8,9 @@ require 'flapjack_configurator/version'
 # Flapjack Configuration Module
 module FlapjackConfigurator
   # Method to configure flapjack
-  def self.configure_flapjack(config, api_base_url = 'http://127.0.0.1:3081', logger = nil)
+  def self.configure_flapjack(config, api_base_url = 'http://127.0.0.1:3081', logger = nil, enable_all_entity = true)
+    ret_val = false
+
     Flapjack::Diner.base_uri(api_base_url)
     unless logger
       logger = Logger.new(STDOUT)
@@ -20,10 +22,17 @@ module FlapjackConfigurator
     # replaced or wrapped very easily in the future.
     config_obj = FlapjackConfig.new(config, Flapjack::Diner, logger)
 
+    if enable_all_entity
+      # Ensure the ALL entity is present
+      ret_val = true if config_obj.add_all_entity
+    end
+
     # Update the contacts
     # This will update media, PD creds, notification rules, and entity associations
     #   as they're associated to the contact.
-    return config_obj.update_contacts
+    ret_val = true if config_obj.update_contacts
+
+    return ret_val
   end
 
   # Simple helper to return the gem version

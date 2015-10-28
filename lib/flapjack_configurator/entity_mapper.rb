@@ -24,7 +24,9 @@ module FlapjackConfigurator
           end
         end
 
-        next if contact_defined # Per Rubocop :)
+        # ALL is a special case entity, don't associate the default to it.
+        # Using next if per Rubocop :)
+        next if contact_defined || entity[:id] == 'ALL'
         # No contacts match this entity, add it to the defaults
         default_contacts.each do |contact_id|
           @entity_map[contact_id.to_sym].push(entity[:id])
