@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'deep_clone'
+require 'deep_merge'
 require_relative 'entity_mapper.rb'
 
 module FlapjackConfigurator
@@ -37,9 +37,9 @@ module FlapjackConfigurator
 
       # Merge in defaults for keys which may be omitted
       return {
-        entites: { exact: [], regex: [] },
-        entites_blacklist: { exact: [], regex: [] }
-      }.merge(@config['contacts'][contact_id])
+        'entities' => { 'exact' => [], 'regex' => [] },
+        'entities_blacklist' => { 'exact' => [], 'regex' => [] }
+      }.deep_merge(@config['contacts'][contact_id])
     end
 
     def baseline_config
@@ -51,18 +51,20 @@ module FlapjackConfigurator
     end
 
     def _complete_config_merge(contact_id, config_key)
-      contact_setting = contact_config(contact_id)[config_key]
-      fail("Missing #{config_key} settings for contact #{contact_id}") if contact_setting.nil?
+      contact_settings = contact_config(contact_id)[config_key]
+      fail("Missing #{config_key} settings for contact #{contact_id}") if contact_settings.nil?
 
-      merged_config = baseline_config.key?(config_key) ? DeepClone.clone(baseline_config[config_key]) : {}
-      contact_defaults = contact_setting.key?('defaults') ? contact_setting['defaults'] : {}
+      baseline_opts = baseline_config.key?(config_key) ? baseline_config[config_key] : {}
+      contact_defaults = contact_settings.key?('defaults') ? contact_settings['defaults'] : {}
 
-      (contact_setting.keys - %w(defaults)).each do |key|
-        # Merge merge merge!
-        if merged_config.key? key
-          merged_config[key].merge!(contact_defaults.merge(contact_setting[key]))
+      merged_config = {}
+      (contact_settings.keys - %w(defaults)).each do |key|
+        # Only merge baseline/defaults if the contact has the setting defined
+        # This is to prevent errors from partial configs built from only partial defaults.
+        if baseline_opts.key? key
+          merged_config[key] = baseline_opts.merge(contact_defaults.merge(contact_settings[key]))
         else
-          merged_config[key] = contact_defaults.merge(contact_setting[key])
+          merged_config[key] = contact_defaults.merge(contact_settings[key])
         end
       end
 

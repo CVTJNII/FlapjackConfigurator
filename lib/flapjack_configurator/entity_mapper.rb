@@ -42,6 +42,9 @@ module FlapjackConfigurator
       contact['entities']['regex'].each do |m_regex|
         return entity[:id] if /#{m_regex}/.match(entity[:name])
       end
+
+      # Fallthrough
+      return nil
     end
 
     # Return the entities for the given contact

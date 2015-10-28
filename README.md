@@ -79,6 +79,8 @@ contacts:
 
 Most (but not all) of the options are passed through directly to the API (This is logged at debug level).
 notification_media and notification_rules are merged down with the per contact rule with the highest precidence, contact defaults, and then baseline_options.
+The key must be present in the contact to merge to prevent partial settings from being built off defaults.
+Complete configs at the baseline_option level with automatic inheritance is not currently supported.
 
 Use
 ===
