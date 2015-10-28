@@ -15,12 +15,12 @@ module FlapjackConfigurator
             diner.method(:update_pagerduty_credentials), diner.method(:delete_pagerduty_credentials), logger, 'pagerduty')
       @allowed_config_keys = [:subdomain, :token, :service_key]
     end
-  
+
     def create(contact_id, config)
       config[:id] = contact_id
       _create(contact_id, _filter_config(config))
     end
-  
+
     # Type helper to match FlapjackMedia
     def type
       return 'pagerduty'

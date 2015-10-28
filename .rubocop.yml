@@ -36,3 +36,12 @@ NumericLiterals:
 # This baby's gonna be complicated \m/
 AbcSize:
   Max: 40
+
+# Disable the english library substitution cop: What is the value here?
+SpecialGlobalVars:
+  Enabled: false
+
+# Turn up the class length
+# The contact class is big, and isn't easily pared down.
+ClassLength:
+  Max: 250

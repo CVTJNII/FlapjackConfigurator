@@ -5,6 +5,7 @@ require 'logger'
 require 'flapjack_configurator/flapjack_config'
 require 'flapjack_configurator/version'
 
+# Flapjack Configuration Module
 module FlapjackConfigurator
   # Method to configure flapjack
   def self.configure_flapjack(config, api_base_url = 'http://127.0.0.1:3081', logger = nil)

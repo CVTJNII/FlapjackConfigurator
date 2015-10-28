@@ -9,7 +9,7 @@ module FlapjackConfigurator
       super(conf_id, current_config, diner.method(:notification_rules), diner.method(:create_contact_notification_rules), diner.method(:update_notification_rules),
             diner.method(:delete_notification_rules), logger, 'notification rule')
     end
-  
+
     def create(contact_id, config)
       # Flapjack will let you create a notification rule object with no attributes, but that sets nils whereas
       # the default it creates has empty arrays.
@@ -27,10 +27,10 @@ module FlapjackConfigurator
         warning_blackhole: false,
         critical_blackhole: false
       }.merge(config)
-  
+
       _create(contact_id, full_config)
     end
-  
+
     def update(config)
       return _update(config)
     end

@@ -14,12 +14,12 @@ def parse_arguments(args, logger)
   logger.level = Logger::INFO
   options.files = []
 
-  opts = OptionParser.new do |opts|
-    opts.banner = "Usage: flapjack_configurator [options]"
-    
-    opts.separator ""
-    opts.separator "Specific options:"
-    
+  parser = OptionParser.new do |opts|
+    opts.banner = 'Usage: flapjack_configurator [options]'
+
+    opts.separator ''
+    opts.separator 'Specific options:'
+
     opts.on('-u', '--apiurl URL', String, 'Flapjack API URL') do |url|
       options.api_url = url
       logger.debug("API URL set to #{url}")
@@ -31,28 +31,28 @@ def parse_arguments(args, logger)
       else
         logger.level -= 1 if logger.level > 0
       end
-      logger.debug("Log level set to #{logger.level}")
+      logger.debug('Log level set to #{logger.level}')
     end
 
     opts.on('-f', '--files file1,file2,file3', Array, 'List of YAML config files to load, increasing precidence') do |files|
       options.files += files
     end
 
-    opts.on_tail("-h", "--help", "Show this message") do
+    opts.on_tail('-h', '--help', 'Show this message') do
       puts opts
       exit
-    end  
+    end
 
-    opts.on_tail("--version", "Show version") do
+    opts.on_tail('--version', 'Show version') do
       puts "Flapjack Configurator #{FlapjackConfigurator.version}"
       exit
     end
   end
 
-  opts.parse!(args)
+  parser.parse!(args)
 
   if options.files.length < 1
-    logger.fatal("Option --files is required")
+    logger.fatal('Option --files is required')
     exit
   end
 
@@ -75,7 +75,7 @@ def main
   options = parse_arguments(ARGV, logger)
   config = load_config(options.files, logger)
 
-  logger.info("Nothing to do") unless FlapjackConfigurator.configure_flapjack(config, options.api_url, logger)
+  logger.info('Nothing to do') unless FlapjackConfigurator.configure_flapjack(config, options.api_url, logger)
 end
 
 # The __FILE__ $0 trick doesn't work when loaded through the gem wrapper

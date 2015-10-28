@@ -3,15 +3,15 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'flapjack_configurator/version'
 
 Gem::Specification.new do |gem|
-  gem.authors       = [ 'Tom Noonan II' ]
+  gem.authors       = ['Tom Noonan II']
   gem.email         = 'thomas.noonan@corvisa.com'
   gem.description   = 'FlapjackConfigurator loads a user specified config from YAML files and loads them idempotently into Flapjack via the Flapjack API'
   gem.summary       = 'Flapjack configuration tool'
-#  gem.homepage      = ''
+  # gem.homepage      = ''
   gem.license       = 'Apache License, Version 2'
 
   gem.files         = `git ls-files`.split($\) - ['Gemfile.lock']
-  gem.executables   = gem.files.grep(%r{^bin/}).map{|f| File.basename(f) }
+  gem.executables   = gem.files.grep(%r{^bin/}).map { |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.name          = 'flapjack_configurator'
   gem.require_paths = ['lib']
