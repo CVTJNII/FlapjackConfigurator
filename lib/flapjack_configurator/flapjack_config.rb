@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
 require_relative 'user_configuration.rb'
 require_relative 'flapjack_media.rb'

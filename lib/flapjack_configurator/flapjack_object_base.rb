@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
 module FlapjackConfigurator
   # Baseline class representing a Flapjack object

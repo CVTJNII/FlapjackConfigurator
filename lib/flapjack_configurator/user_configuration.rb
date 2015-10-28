@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
 require 'deep_clone'
 require_relative 'entity_mapper.rb'
