@@ -69,22 +69,26 @@ module FlapjackConfigurator
 
       wanted_entities = config_obj.entity_map.entities_for_contact(id)
       current_entities = @config[:links][:entities]
+      ret_val = false
 
       (wanted_entities - current_entities).each do |entity_id|
+        @logger.info("Associating entity #{entity_id} to contact #{id}")
         unless @diner.update_contacts(id, add_entity: entity_id)
           fail("Failed to add entity #{entity_id} to contact #{id}")
         end
+        ret_val = true
       end
 
       (current_entities - wanted_entities).each do |entity_id|
+        @logger.info("Removing entity #{entity_id} from contact #{id}")
         unless @diner.update_contacts(id, remove_entity: entity_id)
           fail("Failed to remove entity #{entity_id} from contact #{id}")
         end
+        ret_val = true
       end
 
       _reload_config
-      # != returns false positives
-      return (current_entities - wanted_entities).length > 0
+      return ret_val
     end
 
     # Update the media for the contact
