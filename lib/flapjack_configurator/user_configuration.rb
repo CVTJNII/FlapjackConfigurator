@@ -48,7 +48,6 @@ module FlapjackConfigurator
       return @config['contacts'].select { |_, c| c['entities']['default'] }.keys
     end
 
-
     def baseline_config
       if @config.key? 'baseline_options'
         return @config['baseline_options']

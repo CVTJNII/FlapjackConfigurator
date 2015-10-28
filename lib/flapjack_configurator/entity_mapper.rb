@@ -24,11 +24,10 @@ module FlapjackConfigurator
           end
         end
 
-        unless contact_defined
-          # No contacts match this entity, add it to the defaults
-          default_contacts.each do |contact_id|
-            @entity_map[contact_id.to_sym].push(entity[:id])
-          end
+        next if contact_defined # Per Rubocop :)
+        # No contacts match this entity, add it to the defaults
+        default_contacts.each do |contact_id|
+          @entity_map[contact_id.to_sym].push(entity[:id])
         end
       end
 
