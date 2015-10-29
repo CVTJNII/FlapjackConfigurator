@@ -9,11 +9,13 @@ module FlapjackConfigurator
     def _create(contact_id, config)
       fail("Object #{id} exists") if @obj_exists
       # AFAIK there is not an easy way to convert hash keys to symbols outside of Rails
-      config.each { |k, v| @config[k.to_sym] = v }
-      msg_id = id.nil? ? @config[:type] : id
+      sym_config = {}
+      config.each { |k, v| sym_config[k.to_sym] = v }
+
+      msg_id = id.nil? ? sym_config[:type] : id
       @logger.info("Creating #{@log_name} #{msg_id} for contact #{contact_id}")
-      @logger.debug("#{@log_name} #{id} config: #{@config}")
-      fail "Failed to create #{@log_name} #{id}" unless @create_method.call(contact_id, @config)
+      @logger.debug("#{@log_name} #{id} config: #{sym_config}")
+      fail "Failed to create #{@log_name} #{id}" unless @create_method.call(contact_id, sym_config)
       _reload_config
     end
 
