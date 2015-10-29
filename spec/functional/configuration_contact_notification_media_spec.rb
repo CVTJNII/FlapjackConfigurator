@@ -1,7 +1,7 @@
 require_relative '../spec_helper.rb'
 require_relative 'config_test_common.rb'
 
-ConfigTestCommon.setup_config_test('notification_media') do |rspec_obj, test_config|
+TestCommon.setup_config_test('notification_media') do |rspec_obj, test_config|
   # Table defining which media attributes should be used for each test contact
   test_attr_table = {
     nmt_baseline_inheritence:

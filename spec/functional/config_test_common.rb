@@ -1,11 +1,14 @@
 require_relative '../spec_helper.rb'
 require 'yaml'
+require 'pathname'
 
-module ConfigTestCommon
-  def self.setup_config_test(name)
+# Common support methods for testing the gem
+module TestCommon
+  # Set up the test baseline
+  def self.setup_test(before_when = :all)
     describe 'FlapjackConfigurator gem' do
-      before :all do
-        @test_container = FlapjackTestContainer.new()
+      before before_when do
+        @test_container = FlapjackTestContainer.new
         @test_diner = FlapjackTestDiner.new(@test_container)
 
         # Silence the logger
@@ -13,16 +16,29 @@ module ConfigTestCommon
         @logger.level = Logger::FATAL
       end
 
-      describe 'Config hash' do
+      yield(self)
+    end
+  end
+
+  def self.load_config(name, subdir = nil)
+    path_obj = Pathname.new('spec/functional/test_configs')
+    path_obj += subdir if subdir
+    path_obj += "#{name}.yaml"
+    config = YAML.load_file(path_obj)
+    fail "Failed to load test config from #{filename}" unless config
+    return config
+  end
+
+  def self.setup_config_test(name)
+    setup_test do |rspec_obj|
+      rspec_obj.describe 'Config hash' do
         # Update passes
         { 'initial data'   => { subdir: 'initial', retval: true },
           'inital update'  => { subdir: 'initial', retval: false },
           'changed data'   => { subdir: 'changes', retval: true },
           'changed update' => { subdir: 'changes', retval: false }
         }.each do |test_name, test_data|
-          filename = "spec/functional/test_configs/#{test_data[:subdir]}/#{name}.yaml"
-          test_config = YAML.load_file(filename)
-          fail "Failed to load test config from #{filename}" unless test_config
+          test_config = TestCommon.load_config(name, test_data[:subdir])
 
           describe "Contact #{name} #{test_name}" do
             before :all do
@@ -33,7 +49,7 @@ module ConfigTestCommon
               expect(@config_output).to eq(test_data[:retval])
             end
 
-	    yield(self, test_config)
+            yield(self, test_config)
           end
         end
       end

@@ -2,6 +2,8 @@
 require 'docker'
 require 'flapjack-diner'
 
+# Class which starts a Flapjack instance in Docker for testing
+# Container is removed by the grabage collector
 class FlapjackTestContainer
   attr_reader :container
 
@@ -10,13 +12,13 @@ class FlapjackTestContainer
 
     # Ensure the image is pulled down
     Docker::Image.create(fromImage: image)
-    
+
     # Start the container, binding the API to a random port
     @container = Docker::Container.create(Image: image)
-    @container.start(PortBindings: { '3081/tcp' => [{ HostPort: '' }]})
+    @container.start(PortBindings: { '3081/tcp' => [{ HostPort: '' }] })
 
     # Define the destructor
-    ObjectSpace.define_finalizer(self, self.class.finalize(@container) )
+    ObjectSpace.define_finalizer(self, self.class.finalize(@container))
 
     # TODO: Properly detect if Flapjack is up
     sleep(2)
@@ -39,6 +41,7 @@ class FlapjackTestContainer
   end
 end
 
+# Class which sets up Flapjack::Diner against the test container
 class FlapjackTestDiner
   attr_reader :diner
 

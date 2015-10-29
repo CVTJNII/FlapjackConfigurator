@@ -1,7 +1,7 @@
 require_relative '../spec_helper.rb'
 require_relative 'config_test_common.rb'
 
-ConfigTestCommon.setup_config_test('attributes') do |rspec_obj, test_config|
+TestCommon.setup_config_test('attributes') do |rspec_obj, test_config|
   test_config['contacts'].each do |test_contact, test_contact_settings|
     rspec_obj.describe "#{test_contact} config attributes" do
       before :all do
@@ -16,4 +16,3 @@ ConfigTestCommon.setup_config_test('attributes') do |rspec_obj, test_config|
     end
   end
 end
-
