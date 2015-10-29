@@ -1,0 +1,155 @@
+# Initial test config
+# Intentionally big to hit many scenarios
+---
+baseline_options:
+  notification_media:
+    pagerduty:
+      subdomain: BaselinePDSubdomain2
+      token: BaselinePDToken2
+      service_key: BaselinePDServiceKey2
+      interval: 2100
+      rollup_threshold: 210
+
+    email:
+      address: baseline.address@example2.foo
+      interval: 2102
+      rollup_threshold: 211
+
+    jabber:
+      address: baseline_room@jabber.example2.foo
+      interval: 2103
+      rollup_threshold: 212
+
+contacts:
+  # nmt: Notification media test
+  nmt_baseline_inheritence:
+    details:
+      first_name: TestFirstName
+      last_name: TestLastName
+      email: test.contact.email@example.com
+      timezone: MST7MDT
+    notification_rules:
+      defaults: {}
+
+    notification_media:
+      pagerduty: {}
+      email: {}
+      jabber: {}
+      
+  nmt_default_partial_inheritance:
+    details:
+      first_name: TestFirstName
+      last_name: TestLastName
+      email: test.contact.email@example.com
+      timezone: MST7MDT
+    notification_rules:
+      defaults: {}
+
+    notification_media:
+      defaults:
+        address:   default_address2@example.foo
+        subdomain: DefaultPDSubdomain2
+        interval:  2200
+
+      pagerduty: {}
+      email: {}
+      jabber: {}
+
+  nmt_default_full_inheritance:
+    details:
+      first_name: TestFirstName
+      last_name: TestLastName
+      email: test.contact.email@example.com
+      timezone: MST7MDT
+    notification_rules:
+      defaults: {}
+
+    notification_media:
+      defaults:
+        subdomain: DefaultPDSubdomain2
+        token: DefaultPDToken2
+        service_key: DefaultPDServiceKey2
+        address: default.address@example2.foo
+        interval: 300
+        rollup_threshold: 30
+
+      pagerduty: {}
+      email: {}
+      jabber: {}
+
+  nmt_partial_contacts:
+    details:
+      first_name: TestFirstName
+      last_name: TestLastName
+      email: test.contact.email@example.com
+      timezone: MST7MDT
+    notification_rules:
+      defaults: {}
+
+    notification_media:
+      pagerduty:
+        subdomain: ContactPDSubdomain2
+
+      email:
+        address: contact.address@example2.com
+
+      jabber:
+        address: contact_room@jabber.example2.com
+
+  nmt_full_contacts:
+    details:
+      first_name: TestFirstName
+      last_name: TestLastName
+      email: test.contact.email@example.com
+      timezone: MST7MDT
+    notification_rules:
+      defaults: {}
+
+    notification_media:
+      defaults:
+        subdomain: DefaultPDSubdomain2
+        token: DefaultPDToken2
+        service_key: DefaultPDServiceKey2
+        address: default.address@example2.foo
+        interval: 2300
+        rollup_threshold: 230
+
+      pagerduty:
+        token: ContactPDToken2
+        service_key: ContactPDServiceKey2
+        subdomain: ContactPDSubdomain2
+        interval: 2400
+        rollup_threshold: 240
+
+      email:
+        address: contact.address@example2.com
+        interval: 2401
+        rollup_threshold: 241
+
+      jabber:
+        address: contact_room@jabber.example2.com
+        interval: 2402
+        rollup_threshold: 242
+
+  nmt_real_world:
+    details:
+      first_name: TestFirstName
+      last_name: TestLastName
+      email: test.contact.email@example.com
+      timezone: MST7MDT
+    notification_rules:
+      defaults: {}
+
+    notification_media:
+      defaults:
+        interval: 2500
+        rollup_threshold: 250
+
+      pagerduty:
+        subdomain: ContactPDSubdomain22
+
+      email:
+        address: contact.address22@example.com
+
+      jabber:
+        address: contact_room22@jabber.example.com
