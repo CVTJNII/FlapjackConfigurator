@@ -6,7 +6,7 @@ describe 'FlapjackConfigurator gem' do
     @test_diner = FlapjackTestDiner.new(@test_container)
 
     @dummy_config = { 'contacts' => {} }
-    
+
     # Silence the logger
     @logger = Logger.new(STDOUT)
     @logger.level = Logger::FATAL

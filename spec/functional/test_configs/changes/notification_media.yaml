@@ -1,4 +1,4 @@
-# Initial test config
+# Changed notification_media test config
 # Intentionally big to hit many scenarios
 ---
 baseline_options:
