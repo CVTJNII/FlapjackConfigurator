@@ -45,8 +45,11 @@ module FlapjackConfigurator
     end
 
     def _reload_config
-      @config = @getter_method.call(id)[0]
-      fail "Config reload failed for config ID #{id}" unless @config
+      my_id = id
+      api_obj = @getter_method.call(my_id)
+      fail "Config reload failed for config ID #{my_id}: not found" unless api_obj
+      @config = api_obj[0]
+      fail "Config reload failed for config ID #{my_id}: parse error" unless @config
       @obj_exists = true
     end
 

@@ -1,0 +1,143 @@
+# Initial test config
+# Intentionally big to hit many scenarios
+---
+baseline_options:
+  notification_rules:
+    rules_1:
+      warning_media:
+        - basething1
+        - basething2
+      critical_media:
+        - basething3
+        - basething4
+
+    rules_2:
+      warning_media:
+        - basething5
+        - basething6
+      critical_media:
+        - basething7
+        - basething8
+
+contacts:
+  # nrt: Notification media test
+  nrt_baseline_inheritence:
+    details:
+      first_name: TestFirstName
+      last_name: TestLastName
+      email: test.contact.email@example.com
+      timezone: MST7MDT
+    notification_media: {}
+
+    notification_rules:
+      rules_1: {}
+      rules_2: {}
+
+  nrt_default_partial_inheritance:
+    details:
+      first_name: TestFirstName
+      last_name: TestLastName
+      email: test.contact.email@example.com
+      timezone: MST7MDT
+    notification_media: {}
+
+    notification_rules:
+      defaults:
+        warning_media:
+          - defaultthing1
+          - defaultthing2
+        unknown_media:
+          - defaultthing3
+          - defaultthing4
+
+      rules_1: {}
+      rules_2: {}
+          
+  nrt_default_full_inheritance:
+    details:
+      first_name: TestFirstName
+      last_name: TestLastName
+      email: test.contact.email@example.com
+      timezone: MST7MDT
+    notification_media: {}
+
+    notification_rules:
+      defaults:
+        critical_media:
+          - defaultthing5
+          - defaultthing6
+        warning_media:
+          - defaultthing7
+          - defaultthing8
+        unknown_media:
+          - defaultthing9
+          - defaultthing10
+
+      rules_1: {}
+      rules_2: {}
+
+  nrt_partial_contacts:
+    details:
+      first_name: TestFirstName
+      last_name: TestLastName
+      email: test.contact.email@example.com
+      timezone: MST7MDT
+    notification_media: {}
+
+    notification_rules:
+      defaults:
+        warning_media:
+          - defaultthing11
+          - defaultthing12
+        unknown_media:
+          - defaultthing13
+          - defaultthing14
+
+      rules_1:
+        warning_media:
+          - contactthing1
+          - contactthing2
+        critical_media:
+          - contactthing3
+          - contactthing4
+
+      rules_2: {}
+
+  nrt_full_contacts:
+    details:
+      first_name: TestFirstName
+      last_name: TestLastName
+      email: test.contact.email@example.com
+      timezone: MST7MDT
+    notification_media: {}
+
+    notification_rules:
+      defaults:
+        warning_media:
+          - defaultthing15
+          - defaultthing16
+        unknown_media:
+          - defaultthing17
+          - defaultthing18
+
+      rules_1:
+        warning_media:
+          - contactthing5
+          - contactthing6
+        critical_media:
+          - contactthing7
+          - contactthing8
+        unknown_media:
+          - contactthing9
+          - contactthing10
+
+      rules_2:
+        warning_media:
+          - contactthing11
+          - contactthing12
+        critical_media:
+          - contactthing13
+          - contactthing14
+        unknown_media:
+          - contactthing15
+          - contactthing16

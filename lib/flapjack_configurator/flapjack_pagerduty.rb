@@ -39,7 +39,7 @@ module FlapjackConfigurator
         _create(id, config)
         return true
       else
-         return _update(config)
+        return _update(config)
       end
     end
 

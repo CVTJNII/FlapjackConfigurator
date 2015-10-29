@@ -15,6 +15,7 @@ module FlapjackConfigurator
       # the default it creates has empty arrays.
       # Set up a baseline config that matches what Flapjack creates by default
       full_config = {
+        id: id,
         tags: [],
         regex_tags: [],
         entities: [],
