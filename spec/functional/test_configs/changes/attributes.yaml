@@ -1,0 +1,36 @@
+# Initial attributes write
+---
+
+contacts:
+  attribute_test:
+    details:
+      first_name: ChangedTestFirstName
+      last_name: ChangedTestLastName
+      email: changed.test.contact.email@example.com
+      timezone: CST6CDT
+
+    notification_media:
+      email:
+        address: default.address@example.foo
+        interval: 100
+        rollup_threshold: 1
+
+    notification_rules:
+      defaults: {}
+
+  # Write two contacts to check for crosstalk
+  attribute_test2:
+    details:
+      first_name: ChangedTest2FirstName
+      last_name: ChangedTest2LastName
+      email: changedtest2.contact.email@example.com
+      timezone: PST8PDT
+
+    notification_media:
+      email:
+        address: default.address@example.foo
+        interval: 100
+        rollup_threshold: 1
+
+    notification_rules:
+      defaults: {}

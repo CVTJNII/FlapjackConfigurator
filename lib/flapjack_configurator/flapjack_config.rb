@@ -9,7 +9,7 @@ require_relative 'flapjack_contact.rb'
 module FlapjackConfigurator
   # Class representing the overall Flapjack config
   class FlapjackConfig
-    attr_accessor :config_obj, :contacts
+    attr_reader :config_obj, :contacts
 
     def initialize(config, diner, logger)
       @config_obj = UserConfiguration.new(config, diner, logger)

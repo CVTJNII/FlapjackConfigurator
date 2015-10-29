@@ -6,7 +6,7 @@ require_relative 'entity_mapper.rb'
 module FlapjackConfigurator
   # User Configuration: Class representing the desired configuration as passed into the utility
   class UserConfiguration
-    attr_accessor :config, :entity_map
+    attr_reader :config, :entity_map
 
     def initialize(config, diner, logger)
       @config = config
@@ -45,7 +45,7 @@ module FlapjackConfigurator
     # Return a list of contacts with the default bit set
     # This is pretty entitymapper centric, but it makes more sense here due to current layout.
     def default_contacts
-      return @config['contacts'].select { |_, c| c['entities']['default'] }.keys
+      @config['contacts'].select { |_, contact| contact.key? 'entities' }.select { |_, c| c['entities']['default'] }.keys
     end
 
     def baseline_config
@@ -68,7 +68,7 @@ module FlapjackConfigurator
         # Only merge baseline/defaults if the contact has the setting defined
         # This is to prevent errors from partial configs built from only partial defaults.
         if baseline_opts.key? key
-          merged_config[key] = baseline_opts.merge(contact_defaults.merge(contact_settings[key]))
+          merged_config[key] = baseline_opts[key].merge(contact_defaults.merge(contact_settings[key]))
         else
           merged_config[key] = contact_defaults.merge(contact_settings[key])
         end

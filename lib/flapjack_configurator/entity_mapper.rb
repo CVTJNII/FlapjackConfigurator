@@ -6,7 +6,7 @@ module FlapjackConfigurator
   # Built as a class for future proofing and because this is expected to
   # be an expensive operation: so instantiate it once and pass it around.
   class EntityMapper
-    attr_accessor :entity_map
+    attr_reader :entity_map
 
     def initialize(config_obj, diner)
       @entity_map = {}.tap { |em| config_obj.contact_ids.each { |cn| em[cn.to_sym] = [] } }

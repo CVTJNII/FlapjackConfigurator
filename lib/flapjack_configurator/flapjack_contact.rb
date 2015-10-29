@@ -8,7 +8,7 @@ require_relative 'flapjack_notification_rule.rb'
 module FlapjackConfigurator
   # Class representing a Flapjack contact
   class FlapjackContact < FlapjackObjectBase
-    attr_accessor :media
+    attr_reader :media
 
     def initialize(my_id, current_config, diner, logger, current_media = [], current_notification_rules = [])
       @diner = diner

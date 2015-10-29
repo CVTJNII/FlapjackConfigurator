@@ -3,7 +3,7 @@
 module FlapjackConfigurator
   # Baseline class representing a Flapjack object
   class FlapjackObjectBase
-    attr_accessor :config
+    attr_reader :config
 
     def initialize(my_id, current_config, getter_method, create_method, update_method, delete_method, logger, log_name)
       @config = {}
@@ -23,7 +23,7 @@ module FlapjackConfigurator
       end
 
       if current_config
-        @config.merge! current_config if current_config
+        @config.merge! current_config
         @obj_exists = true
       else
         @obj_exists = false
@@ -33,7 +33,7 @@ module FlapjackConfigurator
     # Load the config from the API
     def _load_from_api(my_id)
       api_data = @getter_method.call(my_id)
-      return nil if api_data.nil?
+      return nil unless api_data
 
       fail "Unexpected number of responses for #{@log_name} #{my_id}" unless api_data.length == 1
       return api_data[0]
@@ -46,8 +46,8 @@ module FlapjackConfigurator
 
     def _reload_config
       @config = @getter_method.call(id)[0]
+      fail "Config reload failed for config ID #{id}" unless @config
       @obj_exists = true
-      fail "Config reload failed for config ID #{id}" if @config.nil?
     end
 
     # No base create object as the method arguments differ too much.
@@ -57,8 +57,9 @@ module FlapjackConfigurator
       fail("Object #{id} doesn't exist") unless @obj_exists
       change_list = {}
       config.each do |k, v|
-        if @config[k.to_sym] != v
-          change_list[k.to_sym] = v
+        k_sym = k.to_sym
+        if @config[k_sym] != v
+          change_list[k_sym] = v
         end
       end
 
