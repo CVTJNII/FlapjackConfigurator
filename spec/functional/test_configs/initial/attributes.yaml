@@ -9,14 +9,8 @@ contacts:
       email: test.contact.email@example.com
       timezone: EST5EDT
 
-    notification_media:
-      email:
-        address: default.address@example.foo
-        interval: 100
-        rollup_threshold: 1
-
-    notification_rules:
-      defaults: {}
+    notification_media: {}
+    notification_rules: {}
 
   # Write two contacts to check for crosstalk
   attribute_test2:
@@ -26,11 +20,5 @@ contacts:
       email: test2.contact.email@example.com
       timezone: MST7MDT
 
-    notification_media:
-      email:
-        address: default.address@example.foo
-        interval: 100
-        rollup_threshold: 1
-
-    notification_rules:
-      defaults: {}
+    notification_media: {}
+    notification_rules: {}
