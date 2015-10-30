@@ -8,14 +8,9 @@ require 'flapjack_configurator/version'
 # Flapjack Configuration Module
 module FlapjackConfigurator
   # Method to configure flapjack
-  def self.configure_flapjack(config, api_base_url = 'http://127.0.0.1:3081', logger = nil, enable_all_entity = true)
+  def self.configure_flapjack(config, api_base_url = 'http://127.0.0.1:3081', logger = Logger.new(STDOUT), enable_all_entity = true)
     ret_val = false
-
     Flapjack::Diner.base_uri(api_base_url)
-    unless logger
-      logger = Logger.new(STDOUT)
-      logger.level = Logger::INFO
-    end
 
     # The underlying classes treat the Flapjack::Diner module as if it is a class.
     # This was done as it was fairly natural and will allow Flapjack::Diner to be
