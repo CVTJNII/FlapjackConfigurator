@@ -25,7 +25,7 @@ def parse_arguments(args, logger)
       logger.debug("API URL set to #{url}")
     end
 
-    opts.on('-v', '--verbosity [level]', Integer, 'Set Verbosity, level corresponds to Ruby logger levels (0: debug, 3: error)') do |level|
+    opts.on('-v', '--verbosity [level]', Integer, "Set Verbosity, level corresponds to Ruby logger levels (#{Logger::DEBUG}: debug, #{Logger::FATAL}: fatal)") do |level|
       if level
         logger.level = level
       else
