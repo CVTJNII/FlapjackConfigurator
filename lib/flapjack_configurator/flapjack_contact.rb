@@ -73,17 +73,13 @@ module FlapjackConfigurator
 
       (wanted_entities - current_entities).each do |entity_id|
         @logger.info("Associating entity #{entity_id} to contact #{id}")
-        unless @diner.update_contacts(id, add_entity: entity_id)
-          fail("Failed to add entity #{entity_id} to contact #{id}")
-        end
+        fail("Failed to add entity #{entity_id} to contact #{id}") unless @diner.update_contacts(id, add_entity: entity_id)
         ret_val = true
       end
 
       (current_entities - wanted_entities).each do |entity_id|
         @logger.info("Removing entity #{entity_id} from contact #{id}")
-        unless @diner.update_contacts(id, remove_entity: entity_id)
-          fail("Failed to remove entity #{entity_id} from contact #{id}")
-        end
+        fail("Failed to remove entity #{entity_id} from contact #{id}") unless @diner.update_contacts(id, remove_entity: entity_id)
         ret_val = true
       end
 

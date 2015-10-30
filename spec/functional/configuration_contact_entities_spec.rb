@@ -105,6 +105,11 @@ TestCommon.setup_test do |rspec_obj|
         it 'matches anything orphaned' do
           expect(@test_diner.diner.contacts('default_test')[0][:links][:entities].sort).to eq(@remaining_entities.names.sort)
         end
+
+        # Redundant, as the above will catch this, but I like having the explicit test.
+        it "doesn't match the magic ALL entitiy" do
+          expect(@test_diner.diner.contacts('default_test')[0][:links][:entities]).not_to include('ALL')
+        end
       end
     end
   end

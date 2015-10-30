@@ -61,8 +61,6 @@ TestCommon.setup_config_test('notification_media') do |rspec_obj, test_config|
                            test_config['contacts'][test_contact.to_s]['notification_media']['defaults'][media_attr.to_s]
                          when :contact
                            test_config['contacts'][test_contact.to_s]['notification_media'][media.to_s][media_attr.to_s]
-                         else
-                           fail "Unknown attribute source #{attr_source}"
                          end
             it "should use the #{attr_source} attribute for #{media_attr}" do
               expect(@api_media[media_attr]).to eql(test_value)

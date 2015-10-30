@@ -46,8 +46,6 @@ TestCommon.setup_config_test('notification_rules') do |rspec_obj, test_config|
                            test_config['contacts'][test_contact.to_s]['notification_rules']['defaults'][rules_attr.to_s]
                          when :contact
                            test_config['contacts'][test_contact.to_s]['notification_rules'][rule.to_s][rules_attr.to_s]
-                         else
-                           fail "Unknown attribute source #{attr_source}"
                          end
             it "should use the #{attr_source} attribute for #{rules_attr}" do
               expect(@api_rules[rules_attr]).to eql(test_value)
