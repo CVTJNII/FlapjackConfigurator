@@ -44,7 +44,7 @@ def parse_arguments(args, logger)
     end
 
     opts.on_tail('--version', 'Show version') do
-      puts "Flapjack Configurator #{FlapjackConfigurator.version}"
+      puts "Flapjack Configurator #{Gem.loaded_specs['flapjack_configurator'].version}"
       exit
     end
   end

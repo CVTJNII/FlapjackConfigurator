@@ -34,9 +34,4 @@ module FlapjackConfigurator
 
     return ret_val
   end
-
-  # Simple helper to return the gem version
-  def self.version
-    return VERSION
-  end
 end

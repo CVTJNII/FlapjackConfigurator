@@ -126,11 +126,6 @@ FlapjackConfigurator.configure_flapjack(config, api_base_url, logger)
   - enable_all_entity (Boolean)(Default: true): Add the ALL magic entity if it doesn't exist
 - Return value: Boolean: true if changes were applied, false otherwise
 
-### version method:
-
-- Arguments: None
-- Return value: String: Gem version
-
 Authors
 =======
 
