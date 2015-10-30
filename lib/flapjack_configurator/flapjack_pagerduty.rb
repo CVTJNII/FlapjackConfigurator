@@ -20,29 +20,6 @@ module FlapjackConfigurator
       _create(contact_id, _filter_config(config))
     end
 
-    # Define our own update to work around https://github.com/flapjack/flapjack-diner/issues/55
-    def update(raw_config)
-      config = _filter_config(raw_config)
-
-      change_list = {}
-      config.each do |k, v|
-        k_sym = k.to_sym
-        if @config[k_sym] != v
-          change_list[k_sym] = v
-        end
-      end
-
-      return false if change_list.empty?
-      if change_list.keys.include? :token
-        @logger.warn("Recreating pager duty token #{id} due to https://github.com/flapjack/flapjack-diner/issues/55")
-        delete
-        _create(id, config)
-        return true
-      else
-        return _update(config)
-      end
-    end
-
     # Type helper to match FlapjackMedia
     def type
       return 'pagerduty'

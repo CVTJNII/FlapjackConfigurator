@@ -17,7 +17,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
   gem.version       = FlapjackConfigurator::VERSION
 
-  gem.add_dependency 'flapjack-diner', '~>1.3'
+  gem.add_dependency 'flapjack-diner', '~>1.4'
   gem.add_dependency 'ruby_deep_clone', '~>0.6'
   gem.add_dependency 'deep_merge', '~>1.0'
 
