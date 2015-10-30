@@ -100,11 +100,13 @@ module FlapjackConfigurator
           # Delete the ID from the type array. This will result in media_config_types being a list of types that need to be created at the end of the loop
           media_config_types.delete(media_obj.type)
         else
-          @media.delete(media_obj)
           media_obj.delete
           ret_val = true
         end
       end
+
+      # Delete outside the loop as deleting inside the loop messes up the each iterator
+      @media.delete_if { |obj| !obj.obj_exists }
 
       media_config_types.each do |type|
         # Pagerduty special case again
@@ -134,11 +136,13 @@ module FlapjackConfigurator
           # Delete the ID from the type array. This will result in nr_config_ids being a list of types that need to be created at the end of the loop
           nr_config_ids.delete(nr_obj.id)
         else
-          @notification_rules.delete(nr_obj)
           nr_obj.delete
           ret_val = true
         end
       end
+
+      # Delete outside the loop as deleting inside the loop messes up the each iterator
+      @notification_rules.delete_if { |obj| !obj.obj_exists }
 
       nr_config_ids.each do |nr_id|
         nr_obj = FlapjackNotificationRule.new(nr_id, nil, @diner, @logger)

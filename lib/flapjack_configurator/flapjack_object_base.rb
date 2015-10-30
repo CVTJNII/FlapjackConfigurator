@@ -3,7 +3,7 @@
 module FlapjackConfigurator
   # Baseline class representing a Flapjack object
   class FlapjackObjectBase
-    attr_reader :config
+    attr_reader :config, :obj_exists
 
     def initialize(my_id, current_config, getter_method, create_method, update_method, delete_method, logger, log_name)
       @config = {}

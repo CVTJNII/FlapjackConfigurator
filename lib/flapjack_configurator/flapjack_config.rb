@@ -33,16 +33,17 @@ module FlapjackConfigurator
       config_contact_ids = @config_obj.contact_ids
       ret_val = false
 
-      @contacts.each do |id, contact_obj|
+      # Iterate over a list of keys to avoid the iterator being impacted by deletes
+      @contacts.keys.each do |id|
         if config_contact_ids.include? id
-          ret_val = true if contact_obj.update(@config_obj)
+          ret_val = true if @contacts[id].update(@config_obj)
 
           # Delete the ID from the id array
           # This will result in config_contact_ids being a list of IDs that need to be created at the end of the loop
           config_contact_ids.delete(id)
         else
           # Delete contact from Flapjack
-          contact_obj.delete
+          @contacts[id].delete
           @contacts.delete(id)
           ret_val = true
         end
