@@ -7,7 +7,7 @@ Gem::Specification.new do |gem|
   gem.email         = 'thomas.noonan@corvisa.com'
   gem.description   = 'FlapjackConfigurator loads a user specified config from YAML files and loads them idempotently into Flapjack via the Flapjack API'
   gem.summary       = 'Flapjack configuration tool'
-  # gem.homepage      = ''
+  gem.homepage      = 'https://github.com/CVTJNII/FlapjackConfigurator'
   gem.license       = 'Apache License, Version 2'
 
   gem.files         = `git ls-files`.split($\) - ['Gemfile.lock']
