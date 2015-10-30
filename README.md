@@ -126,6 +126,13 @@ FlapjackConfigurator.configure_flapjack(config, api_base_url, logger)
   - enable_all_entity (Boolean)(Default: true): Add the ALL magic entity if it doesn't exist
 - Return value: Boolean: true if changes were applied, false otherwise
 
+Testing
+=======
+
+The Rubocop and Rspec coverage are part of the default rake task.
+Tests spin up a Flapjack container in Docker and interact with its API, no mocks are used.
+As such a running Docker daemon is required for tests.
+
 Authors
 =======
 
