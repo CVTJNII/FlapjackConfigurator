@@ -1,0 +1,106 @@
+# This config file preps for removing things
+
+contacts:
+  loaded_test:
+    details:
+      first_name: TestFirstName
+      last_name: TestLastName
+      email: test.contact.email@example.com
+      timezone: EST5EDT
+
+    notification_media:
+      email:
+        address: default.address@example.foo
+        interval: 100
+        rollup_threshold: 1
+
+      jabber:
+        address: default.room@jabber.example.foo
+        interval: 100
+        rollup_threshold: 1
+
+      pagerduty:
+        subdomain: PDSubdomain
+        token: PDToken
+        service_key: PDServiceKey
+        interval: 100
+        rollup_threshold: 10
+        
+    notification_rules:
+      default:
+        critical_media:
+          - email
+
+      rule1:
+        warning_media:
+          - email
+          - jabber
+          - pagerduty
+        critical_media:
+          - email
+          - jabber
+          - pagerduty
+
+      rule2:
+        warning_media:
+          - email
+          - jabber
+          - pagerduty
+        critical_media:
+          - email
+          - jabber
+          - pagerduty
+
+    entities:
+      regex: 
+        - '.*'
+
+  removal_test:
+    details:
+      first_name: TestFirstName
+      last_name: TestLastName
+      email: test.contact.email@example.com
+      timezone: EST5EDT
+
+    notification_media:
+      email:
+        address: default.address@example.foo
+        interval: 100
+        rollup_threshold: 1
+
+      jabber:
+        address: default.room@jabber.example.foo
+        interval: 100
+        rollup_threshold: 1
+
+      pagerduty:
+        subdomain: PDSubdomain
+        token: PDToken
+        service_key: PDServiceKey
+        interval: 100
+        rollup_threshold: 10
+        
+    notification_rules:
+      rule1:
+        warning_media:
+          - email
+          - jabber
+          - pagerduty
+        critical_media:
+          - email
+          - jabber
+          - pagerduty
+
+      rule2:
+        warning_media:
+          - email
+          - jabber
+          - pagerduty
+        critical_media:
+          - email
+          - jabber
+          - pagerduty
+
+    entities:
+      regex: 
+        - '.*'
