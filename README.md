@@ -1,6 +1,8 @@
 Flapjack Configurator
 =====================
 
+[![Gem Version](https://badge.fury.io/rb/flapjack_configurator.svg)](https://badge.fury.io/rb/flapjack_configurator)
+
 This gem provides a idempotent, file based fonfigurator for [Flapjack](http://flapjack.io)
 
 Configuration
