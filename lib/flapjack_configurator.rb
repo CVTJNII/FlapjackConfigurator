@@ -29,4 +29,15 @@ module FlapjackConfigurator
 
     return ret_val
   end
+
+  # Helper to load and merge config yaml files
+  def self.load_config(file_list, logger = Logger.new(STDOUT))
+    config = {}
+    file_list.each do |file_name|
+      logger.debug("Loading config file #{file_name}")
+      config.deep_merge!(YAML.load_file(file_name))
+    end
+
+    return config
+  end
 end

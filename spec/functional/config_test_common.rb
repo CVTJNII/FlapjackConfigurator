@@ -1,5 +1,4 @@
 require_relative '../spec_helper.rb'
-require 'yaml'
 require 'pathname'
 
 # Common support methods for testing the gem
@@ -24,7 +23,11 @@ module TestCommon
     path_obj = Pathname.new('spec/functional/test_configs')
     path_obj += subdir if subdir
     path_obj += "#{name}.yaml"
-    config = YAML.load_file(path_obj)
+
+    logger = Logger.new(STDOUT)
+    logger.level = Logger::FATAL
+
+    config = FlapjackConfigurator.load_config([path_obj.to_s], logger)
     fail "Failed to load test config from #{filename}" unless config
     return config
   end

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    flapjack_configurator (0.0.1)
+    flapjack_configurator (1.1.0)
       deep_merge (~> 1.0)
       flapjack-diner (~> 1.4)
       ruby_deep_clone (~> 0.6)

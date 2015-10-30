@@ -59,21 +59,10 @@ def parse_arguments(args, logger)
   return options
 end
 
-# Load and merge the configs
-def load_config(file_list, logger)
-  config = {}
-  file_list.each do |file_name|
-    logger.debug("Loading config file #{file_name}")
-    config.deep_merge!(YAML.load_file(file_name))
-  end
-
-  return config
-end
-
 def main
   logger = Logger.new(STDOUT)
   options = parse_arguments(ARGV, logger)
-  config = load_config(options.files, logger)
+  config = FlapjackConfigurator.load_config(options.files, logger)
 
   logger.info('Nothing to do') unless FlapjackConfigurator.configure_flapjack(config, options.api_url, logger)
 end

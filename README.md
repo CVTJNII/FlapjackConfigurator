@@ -121,12 +121,23 @@ FlapjackConfigurator.configure_flapjack(config, api_base_url, logger)
 
 ### configure_flapjack method:
 
+Loads the specificed into config
+
 - Arguments:
   - config (Hash): Configuration hash to apply
   - api_base_url (String)(Default: http://127.0.0.1:3081): Flapjack API URL string to connect to
   - logger (Logger)(Default: Logger.new(STDOUT)): Logger class to log to
   - enable_all_entity (Boolean)(Default: true): Add the ALL magic entity if it doesn't exist
 - Return value: Boolean: true if changes were applied, false otherwise
+
+### load_config method:
+
+Loads and merges a list of yaml config files into a config passable to configure_flapjack
+
+- Arguments:
+  - file_list (List): List of files to load
+  - logger (Logger)(Default: Logger.new(STDOUT)): Logger class to log to
+- Return value: Hash: Config loaded from the specified files
 
 Testing
 =======
