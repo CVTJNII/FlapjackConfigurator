@@ -1,5 +1,4 @@
 require_relative '../spec_helper.rb'
-
 require_relative 'config_test_common.rb'
 
 TestCommon.setup_test(:each) do |rspec_obj|

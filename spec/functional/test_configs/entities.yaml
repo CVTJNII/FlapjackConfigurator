@@ -1,0 +1,71 @@
+# Entities search test file
+# No initial/changes as entities aren't attributes
+---
+
+contacts:
+  default_test:
+    details:
+      first_name: TestFirstName
+      last_name: TestLastName
+      email: test.contact.email@example.com
+      timezone: EST5EDT
+
+    notification_media:
+      email:
+        address: default.address@example.foo
+        interval: 100
+        rollup_threshold: 1
+
+    notification_rules:
+      defaults: {}
+
+    entities:
+      default: true
+
+  search_test:
+    details:
+      first_name: TestFirstName
+      last_name: TestLastName
+      email: test.contact.email@example.com
+      timezone: EST5EDT
+
+    notification_media:
+      email:
+        address: default.address@example.foo
+        interval: 100
+        rollup_threshold: 1
+
+    notification_rules:
+      defaults: {}
+
+    # Priority ordering is:
+    #  1: Exact entities
+    #  2: Blacklist entities
+    #  3: Blacklist regex
+    #  4: Entities regex  
+    entities:
+      exact:
+        # Whitelist a few specific entities
+        - testentity-1
+        - testentity-3
+        # Within blacklists
+        - testentity-31
+        - testentity-71
+
+      regex:
+        # Whitelist some ranges
+        - "testentity-[234][0-9]"
+        - "testentity-[678][0-9]"
+    
+    entities_blacklist:
+      exact:
+        # Blacklist some specific values within the whitelist ranges
+        - testentity-21
+        - testentity-23
+        - testentity-61
+        - testentity-63
+
+      regex:
+        # Blacklist some ranges values within the whitelist ranges
+        - "testentity-3[0-9]"
+        - "testentity-7[0-9]"
